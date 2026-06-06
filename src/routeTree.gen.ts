@@ -9,8 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as HospitalRouteImport } from './routes/hospital'
+import { Route as GovernmentRouteImport } from './routes/government'
+import { Route as EmergingThreatsRouteImport } from './routes/emerging-threats'
 import { Route as IndexRouteImport } from './routes/index'
 
+const HospitalRoute = HospitalRouteImport.update({
+  id: '/hospital',
+  path: '/hospital',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GovernmentRoute = GovernmentRouteImport.update({
+  id: '/government',
+  path: '/government',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmergingThreatsRoute = EmergingThreatsRouteImport.update({
+  id: '/emerging-threats',
+  path: '/emerging-threats',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +37,61 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/emerging-threats': typeof EmergingThreatsRoute
+  '/government': typeof GovernmentRoute
+  '/hospital': typeof HospitalRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/emerging-threats': typeof EmergingThreatsRoute
+  '/government': typeof GovernmentRoute
+  '/hospital': typeof HospitalRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/emerging-threats': typeof EmergingThreatsRoute
+  '/government': typeof GovernmentRoute
+  '/hospital': typeof HospitalRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/emerging-threats' | '/government' | '/hospital'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/emerging-threats' | '/government' | '/hospital'
+  id: '__root__' | '/' | '/emerging-threats' | '/government' | '/hospital'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmergingThreatsRoute: typeof EmergingThreatsRoute
+  GovernmentRoute: typeof GovernmentRoute
+  HospitalRoute: typeof HospitalRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/hospital': {
+      id: '/hospital'
+      path: '/hospital'
+      fullPath: '/hospital'
+      preLoaderRoute: typeof HospitalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/government': {
+      id: '/government'
+      path: '/government'
+      fullPath: '/government'
+      preLoaderRoute: typeof GovernmentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/emerging-threats': {
+      id: '/emerging-threats'
+      path: '/emerging-threats'
+      fullPath: '/emerging-threats'
+      preLoaderRoute: typeof EmergingThreatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,17 +104,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmergingThreatsRoute: EmergingThreatsRoute,
+  GovernmentRoute: GovernmentRoute,
+  HospitalRoute: HospitalRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
